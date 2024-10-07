@@ -2,7 +2,6 @@
   <div class="login-container">
     <h1>Login</h1>
     <form @submit.prevent="login">
-      <!-- Campo Email -->
       <div class="form-group">
         <label for="email">Email</label>
         <input
@@ -14,7 +13,6 @@
         />
       </div>
 
-      <!-- Campo Senha -->
       <div class="form-group">
         <label for="password">Senha</label>
         <input
@@ -26,7 +24,6 @@
         />
       </div>
 
-      <!-- Botão de Login -->
       <button type="submit" class="btn">Entrar</button>
     </form>
   </div>
@@ -47,15 +44,12 @@ export default {
     async login() {
       if (this.email && this.password) {
         try {
-          // Requisição ao backend para autenticar o usuário
           const response = await apiClient.post('api/auth/login', {
             email: this.email,
             password: this.password,
           });
           const token = response.data.access_token;
-          // Armazenando o token no Vuex (ou localStorage)
           this.$store.commit('auth/SET_TOKEN', token);
-          // Redireciona para a página do Kanban
           this.$router.push('/kanban');
         } catch (error) {
           console.error('Erro ao fazer login:', error);
@@ -70,7 +64,6 @@ export default {
 </script>
 
 <style scoped>
-/* Estilo simples para a página de login */
 .login-container {
   width: 100%;
   max-width: 400px;

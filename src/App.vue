@@ -1,6 +1,5 @@
 <template>
   <div id="app">
-    <!-- Isso renderiza a view correspondente à rota -->
     <router-view></router-view>
   </div>
 </template>

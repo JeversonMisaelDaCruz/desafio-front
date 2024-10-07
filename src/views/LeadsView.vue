@@ -149,7 +149,7 @@ export default {
 }
 .button-group {
   display: flex;
-  gap: 20px; /* Aumenta o espaçamento entre os botões */
+  gap: 20px; 
 }
 .kanban-button, .new-lead-button {
   padding: 10px 20px;

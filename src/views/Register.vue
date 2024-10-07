@@ -2,7 +2,6 @@
   <div class="register-container">
     <h1>Registrar-se</h1>
     <form @submit.prevent="register">
-      <!-- Campo Nome -->
       <div class="form-group">
         <label for="name">Nome</label>
         <input
@@ -14,7 +13,6 @@
         />
       </div>
 
-      <!-- Campo Email -->
       <div class="form-group">
         <label for="email">Email</label>
         <input
@@ -26,7 +24,6 @@
         />
       </div>
 
-      <!-- Campo Senha -->
       <div class="form-group">
         <label for="password">Senha</label>
         <input
@@ -38,10 +35,8 @@
         />
       </div>
 
-      <!-- Botão de Registro -->
       <button type="submit" class="btn">Registrar</button>
 
-      <!-- Botão para Login -->
       <button type="button" class="btn-secondary" @click="goToLogin">
         Já tenho conta
       </button>
@@ -65,14 +60,13 @@ export default {
     async register() {
       console.log('Tentando registrar...');
       try {
-        // Requisição para registrar usuário
         await apiClient.post('api/auth/register', {
           name: this.name,
           email: this.email,
           password: this.password,
         });
         alert('Usuário registrado com sucesso!');
-        this.$router.push('/login'); // Redireciona para a página de login
+        this.$router.push('/login');
       } catch (error) {
         console.error('Erro ao registrar:', error);
         alert('Erro ao registrar. Tente novamente.');
@@ -87,7 +81,6 @@ export default {
 </script>
 
 <style scoped>
-/* Estilos simples para a página de registro */
 .register-container {
   width: 100%;
   max-width: 400px;
