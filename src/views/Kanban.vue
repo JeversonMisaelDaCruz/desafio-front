@@ -4,14 +4,14 @@
       <div v-for="(column, index) in columns" :key="index" class="kanban-column">
         <h3>{{ column.name }}</h3>
         <draggable
+          v-model="column.leads"
           class="kanban-leads"
-          :list="column.leads"
           group="leads"
           @end="onDragEnd"
         >
-          <!-- Aqui renderizamos os cards dos leads -->
+          <!-- Renderizando os cards dos leads -->
           <template #item="{ element }">
-            <div class="kanban-card">
+            <div :key="element.id" class="kanban-card">
               <h4>{{ element.name }}</h4>
               <p>Email: {{ element.email }}</p>
               <p>Telefone: {{ element.phone }}</p>
@@ -48,8 +48,10 @@ export default {
   methods: {
     async fetchLeads() {
       try {
-        const response = await apiClient.get('api/leads');
+        const response = await apiClient.get('/api/leads');
         const leads = response.data;
+
+        // Filtra os leads de acordo com o status e atribui a cada coluna
         this.columns.forEach((column) => {
           column.leads = leads.filter((lead) => lead.status === column.status);
         });
@@ -59,12 +61,12 @@ export default {
       }
     },
     async onDragEnd(event) {
-      const lead = event.item.__vue__.element;
+      const lead = event.item; // O item é o lead
       const newStatus = this.columns[event.to.dataset.index].status;
 
       try {
-        await apiClient.patch(`api/leads/${lead.id}`, { status: newStatus });
-        this.fetchLeads();
+        await apiClient.patch(`/api/leads/${lead.id}`, { status: newStatus });
+        this.fetchLeads(); // Atualiza os leads após o arraste
       } catch (error) {
         console.error('Erro ao atualizar lead:', error);
         alert('Erro ao atualizar lead');
