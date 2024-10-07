@@ -1,9 +1,11 @@
-<!-- src/views/LeadsView.vue -->
 <template>
   <div class="container">
     <div class="header">
       <h1>Leads</h1>
-      <button @click="openDialog">Novo Lead</button>
+      <div class="button-group">
+        <button @click="gokanban" class="kanban-button">Kanban</button>
+        <button @click="openDialog" class="new-lead-button">Novo Lead</button>
+      </div>
     </div>
 
     <div class="search">
@@ -27,28 +29,27 @@
           <td>{{ lead.phone }}</td>
           <td>{{ lead.status }}</td>
           <td>
-            <button @click="editLead(lead)">Editar</button>
+            <button @click="editLead(lead)" class="edit-button">Editar</button>
           </td>
         </tr>
       </tbody>
     </table>
 
-    <!-- Dialog para criar/editar lead -->
     <div v-if="dialog" class="dialog">
       <div class="dialog-content">
         <h2>{{ formTitle }}</h2>
         <form @submit.prevent="saveLead">
-          <input v-model="editedLead.name" type="text" placeholder="Nome" required />
-          <input v-model="editedLead.email" type="email" placeholder="Email" required />
-          <input v-model="editedLead.phone" type="tel" placeholder="Telefone" required />
-          <select v-model="editedLead.status" required>
+          <input v-model="editedLead.name" type="text" placeholder="Nome" class="input-field" required />
+          <input v-model="editedLead.email" type="email" placeholder="Email" class="input-field" required />
+          <input v-model="editedLead.phone" type="tel" placeholder="Telefone" class="input-field" required />
+          <select v-model="editedLead.status" class="input-field" required>
             <option v-for="status in statuses" :key="status" :value="status">
               {{ status }}
             </option>
           </select>
           <div class="dialog-actions">
-            <button type="button" @click="closeDialog">Cancelar</button>
-            <button type="submit">Salvar</button>
+            <button type="button" @click="closeDialog" class="cancel-button">Cancelar</button>
+            <button type="submit" class="save-button">Salvar</button>
           </div>
         </form>
       </div>
@@ -115,10 +116,8 @@ export default {
     async saveLead() {
       try {
         if (this.editedLead.id) {
-          // Atualizar lead existente
           await apiClient.patch(`api/leads/${this.editedLead.id}`, this.editedLead);
         } else {
-          // Criar novo lead sem o campo id
           await apiClient.post('api/leads', this.editedLead);
         }
         this.fetchLeads();
@@ -129,8 +128,11 @@ export default {
       }
     },
     editLead(item) {
-      this.editedLead = { ...item }; // Copiar o lead para edição
+      this.editedLead = { ...item };
       this.dialog = true;
+    },
+    gokanban() {
+      this.$router.push('/kanban');
     },
   },
 };
@@ -144,6 +146,28 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+.button-group {
+  display: flex;
+  gap: 20px; /* Aumenta o espaçamento entre os botões */
+}
+.kanban-button, .new-lead-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+}
+.kanban-button {
+  background-color: #6c757d;
+  color: white;
+}
+.new-lead-button {
+  background-color: #007bff;
+  color: white;
+}
+.kanban-button:hover, .new-lead-button:hover {
+  opacity: 0.8;
 }
 .search {
   margin: 10px 0;
@@ -170,11 +194,39 @@ th, td {
 }
 .dialog-content {
   background: white;
-  padding: 20px;
+  padding: 30px;
+  border-radius: 8px;
+  width: 400px;
+}
+.input-field {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
   border-radius: 4px;
+  border: 1px solid #ddd;
 }
 .dialog-actions {
   display: flex;
   justify-content: flex-end;
+  gap: 10px;
+}
+.cancel-button {
+  background-color: #dc3545;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.save-button {
+  background-color: #28a745;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.cancel-button:hover, .save-button:hover {
+  opacity: 0.8;
 }
 </style>

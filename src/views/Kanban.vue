@@ -1,6 +1,12 @@
 <template>
   <div class="kanban-container">
+    <!-- Botão para criar novo lead -->
+    <div class="kanban-header">
+      <button @click="goToCreateLead" class="create-lead-button">Criar Lead</button>
+    </div>
+
     <div class="kanban-columns">
+      <!-- Para cada coluna, renderize o título e os leads -->
       <div v-for="(column, index) in columns" :key="index" class="kanban-column">
         <h3>{{ column.name }}</h3>
         <draggable
@@ -9,6 +15,11 @@
           group="leads"
           @end="onDragEnd"
         >
+          <!-- Se não houver leads, mostre uma mensagem -->
+          <template v-if="!column.leads.length">
+            <p class="empty-message">Nenhum lead nesta coluna</p>
+          </template>
+
           <!-- Renderizando os cards dos leads -->
           <template #item="{ element }">
             <div :key="element.id" class="kanban-card">
@@ -34,6 +45,7 @@ export default {
   },
   data() {
     return {
+      // Definindo as colunas do Kanban e inicializando os leads vazios
       columns: [
         { name: 'Novo', status: 'novo', leads: [] },
         { name: 'Em Contato', status: 'em_contato', leads: [] },
@@ -46,12 +58,20 @@ export default {
     this.fetchLeads();
   },
   methods: {
+    // Redireciona para a rota de criação de lead
+    goToCreateLead() {
+      this.$router.push('/leads'); // Substitua pela sua rota correta
+    },
+
+    // Busca os leads da API e distribui nas colunas conforme o status
     async fetchLeads() {
       try {
         const response = await apiClient.get('/api/leads');
         const leads = response.data;
 
-        // Filtra os leads de acordo com o status e atribui a cada coluna
+        console.log('Leads recebidos:', leads); // Verifica os dados recebidos
+
+        // Distribui os leads de acordo com o status
         this.columns.forEach((column) => {
           column.leads = leads.filter((lead) => lead.status === column.status);
         });
@@ -60,13 +80,14 @@ export default {
         alert('Erro ao buscar leads');
       }
     },
+    // Método chamado quando o arraste termina
     async onDragEnd(event) {
-      const lead = event.item; // O item é o lead
+      const lead = event.item; // Captura o item arrastado
       const newStatus = this.columns[event.to.dataset.index].status;
 
       try {
         await apiClient.patch(`/api/leads/${lead.id}`, { status: newStatus });
-        this.fetchLeads(); // Atualiza os leads após o arraste
+        this.fetchLeads(); // Atualiza os leads após a mudança de status
       } catch (error) {
         console.error('Erro ao atualizar lead:', error);
         alert('Erro ao atualizar lead');
@@ -79,8 +100,30 @@ export default {
 <style scoped>
 .kanban-container {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
   padding: 20px;
+}
+
+.kanban-header {
+  width: 100%;
+  max-width: 1200px;
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+}
+
+.create-lead-button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.create-lead-button:hover {
+  background-color: #0056b3;
 }
 
 .kanban-columns {
@@ -122,5 +165,11 @@ export default {
 
 .kanban-card p {
   margin: 0;
+}
+
+.empty-message {
+  text-align: center;
+  color: #999;
+  font-style: italic;
 }
 </style>
