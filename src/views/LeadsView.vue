@@ -58,85 +58,85 @@
 </template>
 
 <script>
-import apiClient from '../plugins/axios';
+  import apiClient from '../plugins/axios';
 
-export default {
-  name: 'LeadsView',
-  data() {
-    return {
-      search: '',
-      leads: [],
-      dialog: false,
-      editedLead: {
-        id: null,
-        name: '',
-        email: '',
-        phone: '',
-        status: '',
-      },
-      statuses: ['novo', 'em_contato', 'qualificado', 'perdido'],
-    };
-  },
-  computed: {
-    formTitle() {
-      return this.editedLead.id ? 'Editar Lead' : 'Novo Lead';
-    },
-    filteredLeads() {
-      return this.leads.filter((lead) =>
-        lead.name.toLowerCase().includes(this.search.toLowerCase())
-      );
-    },
-  },
-  created() {
-    this.fetchLeads();
-  },
-  methods: {
-    async fetchLeads() {
-      try {
-        const response = await apiClient.get('api/leads');
-        this.leads = response.data;
-      } catch (error) {
-        console.error(error);
-        alert('Erro ao buscar leads');
-      }
-    },
-    openDialog() {
-      this.editedLead = {
-        id: null,
-        name: '',
-        email: '',
-        phone: '',
-        status: '',
+  export default {
+    name: 'LeadsView',
+    data() {
+      return {
+        search: '',
+        leads: [],
+        dialog: false,
+        editedLead: {
+          id: null,
+          name: '',
+          email: '',
+          phone: '',
+          status: '',
+        },
+        statuses: ['novo', 'em_contato', 'qualificado', 'perdido'],
       };
-      this.dialog = true;
     },
-    closeDialog() {
-      this.dialog = false;
+    computed: {
+      formTitle() {
+        return this.editedLead.id ? 'Editar Lead' : 'Novo Lead';
+      },
+      filteredLeads() {
+        return this.leads.filter((lead) =>
+          lead.name.toLowerCase().includes(this.search.toLowerCase())
+        );
+      },
     },
-    async saveLead() {
-      try {
-        if (this.editedLead.id) {
-          await apiClient.patch(`api/leads/${this.editedLead.id}`, this.editedLead);
-        } else {
-          await apiClient.post('api/leads', this.editedLead);
+    created() {
+      this.fetchLeads();
+    },
+    methods: {
+      async fetchLeads() {
+        try {
+          const response = await apiClient.get('api/leads');
+          this.leads = response.data;
+        } catch (error) {
+          console.error(error);
+          alert('Erro ao buscar leads');
         }
-        this.fetchLeads();
-        this.closeDialog();
-      } catch (error) {
-        console.error(error);
-        alert('Erro ao salvar lead');
-      }
+      },
+      openDialog() {
+        this.editedLead = {
+          id: null,
+          name: '',
+          email: '',
+          phone: '',
+          status: '',
+        };
+        this.dialog = true;
+      },
+      closeDialog() {
+        this.dialog = false;
+      },
+      async saveLead() {
+        try {
+          if (this.editedLead.id) {
+            await apiClient.patch(`api/leads/${this.editedLead.id}`, this.editedLead);
+          } else {
+            await apiClient.post('api/leads', this.editedLead);
+          }
+          this.fetchLeads();
+          this.closeDialog();
+        } catch (error) {
+          console.error(error);
+          alert('Erro ao salvar lead');
+        }
+      },
+      editLead(item) {
+        this.editedLead = { ...item };
+        this.dialog = true;
+      },
+      gokanban() {
+        this.$router.push('/kanban');
+      },
     },
-    editLead(item) {
-      this.editedLead = { ...item };
-      this.dialog = true;
-    },
-    gokanban() {
-      this.$router.push('/kanban');
-    },
-  },
-};
-</script>
+  };
+  </script>
 
 <style scoped>
 .container {

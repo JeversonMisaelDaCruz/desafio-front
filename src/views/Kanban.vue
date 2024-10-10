@@ -81,6 +81,7 @@ export default {
         alert('Erro ao atualizar lead');
       }
     },
+    //nao esta funcionando infelizmente.
   },
 };
 </script>
